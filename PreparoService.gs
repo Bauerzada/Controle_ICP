@@ -1,7 +1,10 @@
 function listarFilaPreparoICP_(){
   return opsRows_('fila').reverse().slice(0,500).map(function(x){
     const y=Object.assign({},x);
-    y['Atualização exibida']=formatarDataHora_(x['Atualizado em']);
+    const raw=x['Atualizado em'];
+    y['Atualização exibida']=/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}$/.test(String(raw||''))
+      ? String(raw)
+      : formatarDataHora_(raw);
     return y;
   });
 }
