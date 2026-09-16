@@ -1,4 +1,4 @@
-const ICP_VERSION = '0.3.0-USERS-THEME';
+const ICP_VERSION = '0.3.1-UI-HOTFIX';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
