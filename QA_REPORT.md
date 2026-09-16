@@ -47,3 +47,12 @@ Estes itens NÃO são marcados como aprovados apenas por análise estática:
 ## Status
 Código: pronto para implantação de teste.
 Produção: depende do smoke test acima no Web App implantado.
+
+
+## Hotfix 1.0.1 — Registro de amostra
+- [x] Causa estática identificada: referência `metodos` inexistente no payload do submit.
+- [x] Corrigido para `metodos: methods`.
+- [x] type=submit explícito.
+- [x] Erros pré-dispatcher agora geram toast.
+- [x] Após sucesso, fila operacional é recarregada.
+- [ ] Teste real de gravação após nova implantação.
