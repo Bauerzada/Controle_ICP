@@ -124,35 +124,30 @@ function getEstoqueICP_() {
 function getOrCreateEstoqueBanco_() {
   const props = PropertiesService.getScriptProperties();
   const salvo = props.getProperty(ICP_CONFIG.estoqueBancoIdProperty);
+
+  // Regra de bootstrap: se já conhecemos o ID de um Google Sheets,
+  // abrimos pelo Spreadsheet service. Drive não participa da leitura normal.
   if (salvo) {
     try {
-      const file = DriveApp.getFileById(salvo);
-      if (typeof file.isTrashed === 'function' && file.isTrashed()) throw new Error('Banco na lixeira');
-      const parents = file.getParents();
-      let noEscopo = false;
-      while (parents.hasNext()) if (parents.next().getId() === ICP_CONFIG.pastaProjetoId) noEscopo = true;
-      if (!noEscopo) throw new Error('Banco fora da pasta do projeto');
-      return SpreadsheetApp.openById(salvo);
+      const ss = SpreadsheetApp.openById(salvo);
+      prepararAbasEstoqueSeNecessario_(ss);
+      return ss;
     } catch (e) {
-      props.deleteProperty(ICP_CONFIG.estoqueBancoIdProperty);
+      console.error('ICP_ESTOQUE_DB: falha ao abrir banco configurado '+salvo+': '+(e&&e.message?e.message:e));
+      throw new Error('Não foi possível abrir o banco de estoque configurado. ID: '+salvo+'. '+(e&&e.message?e.message:e));
     }
   }
 
-  const folder = DriveApp.getFolderById(ICP_CONFIG.pastaProjetoId);
-  const files = folder.getFilesByName(ICP_CONFIG.estoqueBancoNome);
-  while (files.hasNext()) {
-    const file = files.next();
-    if (typeof file.isTrashed === 'function' && file.isTrashed()) continue;
-    const ssExistente = SpreadsheetApp.openById(file.getId());
-    props.setProperty(ICP_CONFIG.estoqueBancoIdProperty, ssExistente.getId());
-    return ssExistente;
-  }
+  // Não criar nem procurar banco silenciosamente durante bootstrap.
+  // A instalação explícita é responsável por inicializar o banco.
+  throw new Error('Banco de estoque não configurado. Execute instalarControleICP() uma vez.');
+}
 
-  const ss = SpreadsheetApp.create(ICP_CONFIG.estoqueBancoNome);
-  DriveApp.getFileById(ss.getId()).moveTo(folder);
-  prepararAbasEstoque_(ss);
-  props.setProperty(ICP_CONFIG.estoqueBancoIdProperty, ss.getId());
-  return ss;
+function prepararAbasEstoqueSeNecessario_(ss) {
+  const nomes=ss.getSheets().map(function(sh){return sh.getName()});
+  const obrigatorias=[ICP_CONFIG.abas.estoque,ICP_CONFIG.abas.movimentacoes,ICP_CONFIG.abas.pedidos];
+  const faltando=obrigatorias.filter(function(n){return nomes.indexOf(n)<0});
+  if(faltando.length) throw new Error('Banco de estoque incompleto. Abas ausentes: '+faltando.join(', '));
 }
 
 function prepararAbasEstoque_(ss) {

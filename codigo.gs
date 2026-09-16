@@ -1,4 +1,4 @@
-const ICP_VERSION = '1.0.5-OPS-BOOTSTRAP-HOTFIX';
+const ICP_VERSION = '1.0.8-BOOTSTRAP-NODRIVE-HOTFIX';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',

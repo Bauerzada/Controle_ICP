@@ -56,3 +56,15 @@ Produção: depende do smoke test acima no Web App implantado.
 - [x] Erros pré-dispatcher agora geram toast.
 - [x] Após sucesso, fila operacional é recarregada.
 - [ ] Teste real de gravação após nova implantação.
+
+
+## Hotfix 1.0.6 — avanço persistente e auditoria da Fila de preparo
+- [x] CACHE, padrão de engenharia e checklist consultados antes da alteração.
+- [x] Timestamp ISO continua persistido internamente para rastreabilidade.
+- [x] Fila expõe campo de apresentação em dd/MM/yyyy HH:mm usando o fuso do projeto.
+- [x] Avançar persiste Status, Responsável e Atualizado em no banco operacional.
+- [x] Transições são validadas no backend: Aguardando preparo -> Em preparo -> Preparado -> Liberado.
+- [x] Botão Avançar usa ciclo busy com liberação pelo helper compartilhado.
+- [x] Após sucesso a fila é relida do backend; a UI não depende de alteração local temporária.
+- [x] Estado Liberado não gera nova mutação ao clicar novamente.
+- [ ] Smoke test real: avançar uma amostra, recarregar a página e confirmar persistência.

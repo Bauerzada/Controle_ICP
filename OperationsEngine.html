@@ -4,7 +4,7 @@ const e=id=>document.getElementById(id), esc=v=>g.escapeHtml?g.escapeHtml(v):Str
 async function load(){try{await g.gas('sincronizarFilaPreparoICP');const data=await g.gas('getOperacaoBootstrap');S.data=data&&typeof data==='object'?data:{fila:[],atividades:[],curvas:[],cq:[],sequencias:[],equipamento:[],erros:[]};render();syncSelectors();return S.data;}catch(x){g.toast(x&&x.message?x.message:String(x),true);throw x}}
 function open(id){e(id).style.display='block'} function close(id){e(id).style.display='none'}
 function rows(id,list,fn,cols){if(!e(id))return;e(id).innerHTML=list.length?list.map(fn).join(''):'<tr><td colspan="'+cols+'"><div class="empty">Nenhum registro.</div></td></tr>'}
-function render(){rows('prepBody',S.data.fila||[],x=>'<tr><td><strong>'+esc(x.Amostra)+'</strong></td><td>'+esc(x.Embalagem)+'</td><td>'+esc(x['Métodos'])+'</td><td>'+g.badge(x.Status||'Aguardando')+'</td><td>'+esc(x['Responsável'])+'</td><td>'+esc(x['Atualizado em'])+'</td><td><button class="btn" onclick="OpsICP.advancePrep(\''+esc(x.ID)+'\')">Avançar</button></td></tr>',7);
+function render(){rows('prepBody',S.data.fila||[],x=>'<tr><td><strong>'+esc(x.Amostra)+'</strong></td><td>'+esc(x.Embalagem)+'</td><td>'+esc(x['Métodos'])+'</td><td>'+g.badge(x.Status||'Aguardando')+'</td><td>'+esc(x['Responsável'])+'</td><td>'+esc(x['Atualização exibida']||x['Atualizado em'])+'</td><td><button class="btn" onclick="OpsICP.advancePrep(\''+esc(x.ID)+'\')">Avançar</button></td></tr>',7);
 rows('activityBody',S.data.atividades||[],x=>'<tr><td>'+esc(x['Nº Atividade']||x.ID)+'</td><td>'+esc(x.CR)+' / '+esc(x.Amostra)+'</td><td>'+esc(x.Cliente)+'</td><td>'+esc(x['Parâmetro'])+'</td><td>'+esc(x['Responsável'])+'</td><td>'+g.badge(x.Status||'Aberta')+'</td><td>'+esc(x.Repetindo)+'</td><td><button class="btn" onclick="OpsICP.resolveActivity(\''+esc(x.ID)+'\')">Resolver</button></td></tr>',8);
 rows('curveBody',S.data.curvas||[],x=>'<tr><td><strong>'+esc(x['Identificação'])+'</strong></td><td>'+esc(x.Tipo)+'</td><td>'+g.badge(x.Status||'Registrada')+'</td><td>'+esc(x['Volume consumido'])+' '+esc(x.Unidade)+'</td><td>'+esc(x['Responsável'])+'</td><td>'+esc(x.Data)+'</td></tr>',6);
 rows('cqBody',S.data.cq||[],x=>'<tr><td>'+esc(x.Tipo)+'</td><td>'+esc(x['Método'])+'</td><td><strong>'+esc(x.Resultado)+' '+esc(x.Unidade)+'</strong></td><td>'+esc(x['Limite inferior'])+' — '+esc(x['Limite superior'])+'</td><td>'+g.badge(x.Status||'Registrado')+'</td><td>'+esc(x['Curva ID'])+'</td><td>'+esc(x['Responsável'])+'</td></tr>',7);
@@ -19,7 +19,21 @@ async function saveCQ(ev){ev.preventDefault();return save('registrarCQICP',{tipo
 async function saveSeq(ev){ev.preventDefault();return save('salvarSequenciaICP',{nome:e('sqName').value,metodo:e('sqMethod').value,amostras:e('sqSamples').value,responsavel:e('sqResp').value,status:e('sqStatus').value},'seqModal','sqSave')}
 async function saveEquipment(ev){ev.preventDefault();return save('registrarEquipamentoICP',{tipo:e('eqType').value,descricao:e('eqDesc').value,status:e('eqStatus').value,responsavel:e('eqResp').value,proxima:e('eqNext').value},'equipmentModal','eqSave')}
 async function saveError(ev){ev.preventDefault();return save('registrarErroICP',{codigo:e('erCode').value,titulo:e('erTitle').value,sintoma:e('erSymptom').value,causa:e('erCause').value,solucao:e('erSolution').value,responsavel:e('erResp').value,evidencia:e('erEvidence').value},'errorModal','erSave')}
-async function advancePrep(id){const x=(S.data.fila||[]).find(v=>v.ID===id);if(!x)return;const order=['Aguardando preparo','Em preparo','Preparado','Liberado'],i=Math.max(0,order.indexOf(x.Status)),next=order[Math.min(i+1,order.length-1)];await g.gas('atualizarFilaPreparoICP',{id,status:next,responsavel:((g.State||{}).currentUser||{}).nome||x['Responsável']});await load();g.toast('Preparo atualizado para '+next+'.')}
+async function advancePrep(id){
+  const x=(S.data.fila||[]).find(v=>v.ID===id);if(!x)return;
+  const order=['Aguardando preparo','Em preparo','Preparado','Liberado'];
+  const i=Math.max(0,order.indexOf(x.Status));
+  const next=order[Math.min(i+1,order.length-1)];
+  if(next===x.Status){g.toast('A amostra já está liberada.');return;}
+  const btn=document.activeElement&&document.activeElement.tagName==='BUTTON'?document.activeElement:null;
+  await g.busy(btn,'Avançando…',async()=>{
+    const appState=g.State||{};
+    const user=(appState.currentUser||{});
+    await g.gas('atualizarFilaPreparoICP',{id,status:next,responsavel:user.nome||x['Responsável']});
+    await load();
+    g.toast('Preparo atualizado para '+next+'.');
+  });
+}
 async function resolveActivity(id){await g.gas('salvarAtividadeICP',{id,status:'Resolvida',responsavel:((g.State||{}).currentUser||{}).nome||'',repetindo:'Não',resultado:'Resolvida'});await load();g.toast('Atividade resolvida.')}
 g.OpsICP={load,render,open,close,saveActivity,saveCurve,saveCQ,saveSeq,saveEquipment,saveError,advancePrep,resolveActivity};
 })(window);

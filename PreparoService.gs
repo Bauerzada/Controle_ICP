@@ -1,4 +1,13 @@
-function listarFilaPreparoICP_(){return opsRows_('fila').reverse().slice(0,500)}
+function listarFilaPreparoICP_(){
+  return opsRows_('fila').reverse().slice(0,500).map(function(x){
+    const y=Object.assign({},x);
+    const raw=x['Atualizado em'];
+    y['Atualização exibida']=/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}$/.test(String(raw||''))
+      ? String(raw)
+      : formatarDataHora_(raw);
+    return y;
+  });
+}
 
 function adicionarFilaPreparoICP_(dados){
   dados=dados||{};
@@ -7,8 +16,19 @@ function adicionarFilaPreparoICP_(dados){
 
 function atualizarFilaPreparoICP_(p){
   p=p||{};if(!p.id)throw new Error('ID obrigatório.');
-  opsUpdate_('fila',p.id,{'Status':textoICP_(p.status,60),'Responsável':textoICP_(p.responsavel,100),'Atualizado em':agoraISOICP_(),'Observações':textoICP_(p.observacoes,500)});
-  return {ok:true}
+  const atuais=opsRows_('fila');
+  const atual=atuais.find(function(x){return String(x.ID)===String(p.id)});
+  if(!atual)throw new Error('Registro da fila não encontrado.');
+  const ordem=['Aguardando preparo','Em preparo','Preparado','Liberado'];
+  const statusAtual=textoICP_(atual.Status||'Aguardando preparo',60);
+  const statusNovo=textoICP_(p.status,60);
+  const idxAtual=ordem.indexOf(statusAtual), idxNovo=ordem.indexOf(statusNovo);
+  if(idxNovo<0)throw new Error('Status de preparo inválido.');
+  if(idxAtual>=0 && idxNovo!==Math.min(idxAtual+1,ordem.length-1) && statusNovo!==statusAtual)throw new Error('Transição de preparo inválida.');
+  const agora=agoraISOICP_();
+  const responsavel=textoICP_(p.responsavel||atual['Responsável'],100);
+  opsUpdate_('fila',p.id,{'Status':statusNovo,'Responsável':responsavel,'Atualizado em':agora,'Observações':textoICP_(p.observacoes!=null?p.observacoes:atual['Observações'],500)});
+  return {ok:true,id:p.id,statusAnterior:statusAtual,status:statusNovo,responsavel:responsavel,atualizadoEm:agora,atualizacaoExibida:formatarDataHora_(agora)}
 }
 
 /**
