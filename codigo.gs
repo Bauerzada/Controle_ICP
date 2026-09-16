@@ -1,4 +1,4 @@
-const ICP_VERSION = '0.4.1-METHODS-ALIGN';
+const ICP_VERSION = '0.4.2-METHODS-HOTFIX';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
