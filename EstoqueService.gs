@@ -1,7 +1,7 @@
 const ICP_ESTOQUE_INICIAL = [
-  ['Consumível','Ácido Nítrico P.A.','80625 - ICP','L',3042,4,1000,'','2026-08-23',''],
-  ['Consumível','Ácido Nítrico P.A.','82919 - ICP','L',548.5,1,1000,'','2026-08-23','Foi aberto RI? Qual o número da RI?'],
-  ['Consumível','Ácido Clorídrico 37%','83248 - ICP','L',1600,2,1000,'','2026-08-23',''],
+  ['Reagente','Ácido Nítrico P.A.','80625 - ICP','L',3042,4,1000,'','2026-08-23',''],
+  ['Reagente','Ácido Nítrico P.A.','82919 - ICP','L',548.5,1,1000,'','2026-08-23','Foi aberto RI? Qual o número da RI?'],
+  ['Reagente','Ácido Clorídrico 37%','83248 - ICP','L',1600,2,1000,'','2026-08-23',''],
   ['Consumível','Membrana filtrante','20250220YGEXM','un',104,2,50,'','2026-08-23',''],
   ['Consumível','Fita de pH','pH 0,14 GENE - ICP','un',230,1,30,'','2026-08-23',''],
   ['Consumível','Filtro para seringa','335052210 - ICP','un',100,1,30,'','2026-08-23',''],
