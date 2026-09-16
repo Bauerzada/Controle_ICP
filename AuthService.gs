@@ -90,7 +90,11 @@ function executarAcaoICP(token,acao,args){
     registrarCQICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarCQICP_(a[0])},
     salvarSequenciaICP:{perfis:ICP_AUTH.perfis,fn:a=>salvarSequenciaICP_(a[0])},
     registrarEquipamentoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarEquipamentoICP_(a[0])},
-    registrarErroICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarErroICP_(a[0])}
+    registrarErroICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarErroICP_(a[0])},
+    listarRequisicoesICP:{perfis:ICP_AUTH.perfis,fn:()=>listarRequisicoesICP_()},
+    atualizarRequisicaoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>atualizarRequisicaoICP_(a[0])},
+    listarCaixasICP:{perfis:ICP_AUTH.perfis,fn:()=>listarCaixasICP_()},
+    registrarCaixaICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarCaixaICP_(a[0])}
   };
   const item=mapa[String(acao||'')]; if(!item)throw new Error('Ação não permitida.');
   exigirPerfilICP_(token,item.perfis); return item.fn(Array.isArray(args)?args:[]);
