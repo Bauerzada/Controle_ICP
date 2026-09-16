@@ -84,6 +84,7 @@ function executarAcaoICP(token,acao,args){
     registrarMovimentacaoEstoqueICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarMovimentacaoEstoqueICP(a[0])},
     salvarPedidoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>salvarPedidoICP(a[0])},
     getOperacaoBootstrap:{perfis:ICP_AUTH.perfis,fn:()=>getOperacaoBootstrap_()},
+    sincronizarFilaPreparoICP:{perfis:ICP_AUTH.perfis,fn:()=>sincronizarFilaPreparoICP_()},
     atualizarFilaPreparoICP:{perfis:ICP_AUTH.perfis,fn:a=>atualizarFilaPreparoICP_(a[0])},
     salvarAtividadeICP:{perfis:ICP_AUTH.perfis,fn:a=>salvarAtividadeICP_(a[0])},
     registrarCurvaICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarCurvaICP_(a[0])},
