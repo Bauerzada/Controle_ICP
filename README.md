@@ -83,3 +83,12 @@ A decomposição exata do código de bipagem ainda precisa ser validada com uma 
 
 ## Memória técnica
 Antes de mudanças relevantes, consultar `Bauerzada/CACHE-API-RESPOSTAS_ANTERIORES`. Novos bugs, comandos, decisões e correções relevantes deste projeto devem ser registrados lá.
+
+
+## Suite modular 1.0.0
+O projeto agora inclui Fila de Preparo, Caixas, Requisições, Rotina/Atividades, Curvas/Padrões, Controle de Qualidade, Sequências ICP 5110 e Equipamento/Atlas de Erros.
+
+### Arquivos adicionais obrigatórios no Apps Script
+DataService.gs, PreparoService.gs, RotinaService.gs, CurvasService.gs, CQService.gs, ICP5110Service.gs, OperacaoService.gs, LogisticaService.gs, OperationsView.html, OperationsEngine.html, LogisticaView.html e LogisticaEngine.html.
+
+Após copiar/atualizar todos os arquivos, execute instalarControleICP() uma vez. O instalador prepara tanto o banco de estoque quanto a nova planilha Controle ICP - Operação. Depois crie uma nova versão da implantação e execute o roteiro de QA_REPORT.md antes de produção.
