@@ -9,8 +9,9 @@
     :root{
       --primary:#2563EB;--secondary:#475569;--background:#F8FAFC;--surface:#FFFFFF;--text:#0F172A;
       --success:#16A34A;--error:#DC2626;--warning:#D97706;--border:#E2E8F0;--muted:#64748B;
-      --shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+      --shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--input:#FFFFFF;--soft:#F8FAFC;
     }
+    [data-theme="dark"]{--background:#0F172A;--surface:#111827;--text:#F8FAFC;--secondary:#CBD5E1;--border:#334155;--muted:#94A3B8;--input:#1E293B;--soft:#1E293B;--shadow:0 1px 3px rgba(0,0,0,.35)}
     *{box-sizing:border-box}
     body{margin:0;background:var(--background);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:1rem;font-weight:400;line-height:1.5}
     h1,h2,h3{margin:0;color:var(--text);font-weight:600} h1{font-size:2rem} h2{font-size:1.5rem} small{font-size:.875rem}
@@ -25,11 +26,11 @@
     .grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:24px}.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:24px}.kpi-label{color:var(--muted);font-size:.875rem}.kpi-value{font-size:1.75rem;font-weight:600;margin-top:4px}.danger{color:var(--error)}.success{color:var(--success)}
     .page{display:none}.page.active{display:block}.two{grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr)}
     label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px}.field{margin-bottom:16px}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    input,select,textarea{width:100%;border:1px solid #CBD5E1;background:#fff;color:var(--text);border-radius:6px;padding:10px 12px;transition:all .2s ease-in-out}textarea{min-height:88px;resize:vertical}
+    input,select,textarea{width:100%;border:1px solid #CBD5E1;background:var(--input);color:var(--text);border-radius:6px;padding:10px 12px;transition:all .2s ease-in-out}textarea{min-height:88px;resize:vertical}
     .scan{font-size:1.2rem;padding:14px 16px}.methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.method{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:6px;padding:10px 12px;cursor:pointer}.method input{width:auto;margin:0}
-    .preview{background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:12px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.preview strong{display:block}.preview span{color:var(--muted);font-size:.875rem}
-    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:900px;background:#fff}th,td{padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}th{font-size:.875rem;background:#F8FAFC;position:sticky;top:0}td{font-size:.875rem}.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:.75rem;font-weight:600}.badge-ok{background:#DCFCE7;color:#166534}.badge-low{background:#FEE2E2;color:#991B1B}.badge-warn{background:#FEF3C7;color:#92400E}
-    .toolbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.toolbar input{max-width:360px}.tabs{display:flex;gap:8px;margin-bottom:16px}.tab{border:1px solid var(--border);background:#fff;border-radius:6px;padding:8px 12px;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .preview{background:var(--soft);border:1px dashed #CBD5E1;border-radius:12px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.preview strong{display:block}.preview span{color:var(--muted);font-size:.875rem}
+    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:900px;background:var(--surface)}th,td{padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}th{font-size:.875rem;background:var(--soft);position:sticky;top:0}td{font-size:.875rem}.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:.75rem;font-weight:600}.badge-ok{background:#DCFCE7;color:#166534}.badge-low{background:#FEE2E2;color:#991B1B}.badge-warn{background:#FEF3C7;color:#92400E}
+    .toolbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.toolbar input{max-width:360px}.tabs{display:flex;gap:8px;margin-bottom:16px}.tab{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:6px;padding:8px 12px;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
     .low-list{display:flex;flex-direction:column;gap:8px}.low-item{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
     .empty{padding:32px;text-align:center;color:var(--muted)}.toast{position:fixed;right:24px;bottom:24px;max-width:420px;background:var(--text);color:#fff;padding:12px 16px;border-radius:6px;box-shadow:var(--shadow);display:none;z-index:50}.toast.show{display:block}.toast.error{background:var(--error)}
     .busy{display:inline-flex;gap:8px;align-items:center}.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
@@ -54,7 +55,8 @@
       <button class="nav-btn" data-page="amostras">Registro de amostra</button>
       <button class="nav-btn" data-page="estoque">Controle de estoque</button>
       <button class="nav-btn" data-page="compras">Compras</button>
-    </nav><div class="userbox"><small id="currentUser"></small><button class="nav-btn" style="margin-top:8px;width:100%" onclick="AuthEngineICP.logout()">Sair</button></div>
+      <button class="nav-btn admin-only" data-page="usuarios" style="display:none">Usuários</button>
+    </nav><div class="userbox"><small id="currentUser"></small><button class="nav-btn" style="margin-top:8px;width:100%" onclick="openPasswordModal()">Alterar senha</button><button class="nav-btn" style="width:100%" onclick="toggleTheme()">Modo noturno</button><button class="nav-btn" style="width:100%" onclick="AuthEngineICP.logout()">Sair</button></div>
   </aside>
   <main>
     <section id="dashboard" class="page active">
@@ -103,10 +105,16 @@
         <form class="card" onsubmit="submitOrder(event)"><h2 style="margin-bottom:16px">Novo pedido</h2><div class="field"><label>Item</label><input id="orderItem" required></div><div class="field"><label>Quantidade a comprar</label><input id="orderQty" type="number" min="0" step="any" required></div><div class="field"><label>Fornecedor</label><input id="orderSupplier"></div><div class="row"><div class="field"><label>Data do pedido</label><input id="orderDate" type="date"></div><div class="field"><label>Status</label><select id="orderStatus"><option>Pendente</option><option>Enviado</option><option>Recebido</option></select></div></div><div class="field"><label>Observações</label><textarea id="orderObs"></textarea></div><button class="btn btn-primary" id="orderSubmit">Salvar pedido</button></form>
       </div>
     </section>
+    <section id="usuarios" class="page">
+      <div class="topbar"><div><h1>Usuários</h1><p>Cadastre e gerencie os acessos ao Controle ICP.</p></div><button class="btn btn-primary" onclick="openUserModal()">Novo usuário</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+    </section>
   </main>
 </div>
 
 <div class="toast" id="toast"></div>
+<div id="userModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:60;padding:24px;overflow:auto"><form class="card" style="max-width:620px;margin:40px auto" onsubmit="submitUser(event)"><div class="topbar"><h2 id="userModalTitle">Novo usuário</h2><button type="button" class="btn btn-secondary" onclick="$('userModal').style.display='none'">Fechar</button></div><input type="hidden" id="userId"><div class="row"><div class="field"><label>Nome</label><input id="userName" required></div><div class="field"><label>Usuário</label><input id="userLogin" required></div></div><div class="row"><div class="field"><label>Perfil</label><select id="userProfile"><option>OPERADOR</option><option>GESTOR</option><option>ADMINISTRADOR</option></select></div><div class="field"><label>Status</label><select id="userActive"><option value="true">Ativo</option><option value="false">Inativo</option></select></div></div><div class="field"><label>Senha <small id="userPasswordHint"></small></label><input id="userPassword" type="password" minlength="6"></div><button class="btn btn-primary" id="userSubmit">Salvar usuário</button></form></div>
+<div id="passwordModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:60;padding:24px;overflow:auto"><form class="card" style="max-width:520px;margin:40px auto" onsubmit="submitPassword(event)"><div class="topbar"><h2>Alterar senha</h2><button type="button" class="btn btn-secondary" onclick="$('passwordModal').style.display='none'">Fechar</button></div><div class="field"><label>Senha atual</label><input id="currentPassword" type="password" required></div><div class="field"><label>Nova senha</label><input id="newPassword" type="password" minlength="6" required></div><div class="field"><label>Confirmar nova senha</label><input id="confirmPassword" type="password" minlength="6" required></div><button class="btn btn-primary" id="passwordSubmit">Alterar senha</button></form></div>
 
 <div id="itemModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40;padding:24px;overflow:auto">
   <form class="card" style="max-width:720px;margin:40px auto" onsubmit="submitItem(event)">
@@ -125,18 +133,19 @@
 </div>
 
 <script>
-const State={bootstrap:null,stock:[],stockFilter:'Todos',decodeTimer:null};
+const State={bootstrap:null,stock:[],stockFilter:'Todos',decodeTimer:null,users:[],currentUser:null};
 const $=id=>document.getElementById(id);
 
 document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme(localStorage.getItem('ICP_THEME')||'light');
   document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page,btn)));
   const today=new Date(); $('sampleDate').value=today.toISOString().slice(0,10); $('orderDate').value=today.toISOString().slice(0,10);
   AuthEngineICP.boot().catch(e=>toast(e.message,true));
 });
 
 function gas(name,...args){return ActionEngineICP.run(name,args);}
-function showPage(page,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(page).classList.add('active');document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(page==='amostras')setTimeout(()=>$('sampleCode').focus(),50)}
-async function loadBootstrap(){try{const data=await gas('getBootstrapICP');State.bootstrap=data;State.stock=data.estoque||[];$('version').textContent=data.version;$('currentSheet').textContent=data.abaLiberacaoAtual;renderMethods(data.metodos||[]);renderCategories(data.categorias||[]);renderAll()}catch(e){toast(e.message,true)}}
+async function showPage(page,btn){if(page==='usuarios')await loadUsers();document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(page).classList.add('active');document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(page==='amostras')setTimeout(()=>$('sampleCode').focus(),50)}
+async function loadBootstrap(){try{const session=await ActionEngineICP.direct('validarSessaoICP',[AuthEngineICP.token()]);State.currentUser=session&&session.usuario||null;document.querySelectorAll('.admin-only').forEach(x=>x.style.display=State.currentUser&&State.currentUser.perfil==='ADMINISTRADOR'?'block':'none');const data=await gas('getBootstrapICP');State.bootstrap=data;State.stock=data.estoque||[];$('version').textContent=data.version;$('currentSheet').textContent=data.abaLiberacaoAtual;renderMethods(data.metodos||[]);renderCategories(data.categorias||[]);renderAll()}catch(e){toast(e.message,true)}}
 async function refreshAll(btn){return busy(btn,'Atualizando…',async()=>{await loadBootstrap();toast('Dados atualizados.')})}
 function renderAll(){renderKpis();renderStock();renderLowLists()}
 function renderKpis(){const r=State.bootstrap&&State.bootstrap.resumo||{};$('kpiItens').textContent=r.itens??0;$('kpiBaixo').textContent=r.baixo??0;$('kpiOk').textContent=r.ok??0;$('kpiMinimo').textContent=r.definirMinimo??0}
@@ -159,6 +168,15 @@ function openMove(id){const i=State.stock.find(x=>x.id===id);if(!i)return;$('mov
 function closeMoveModal(){$('moveModal').style.display='none'}
 async function submitMove(ev){ev.preventDefault();const p={id:$('moveId').value,tipo:$('moveType').value,quantidade:$('moveQty').value,embalagens:$('movePackages').value,responsavel:$('moveResponsible').value,observacoes:$('moveObs').value};await busy($('moveSubmit'),'Registrando…',async()=>{await gas('registrarMovimentacaoEstoqueICP',p);closeMoveModal();await loadBootstrap();toast('Movimentação registrada.')})}
 async function submitOrder(ev){ev.preventDefault();const p={item:$('orderItem').value,quantidade:$('orderQty').value,fornecedor:$('orderSupplier').value,dataPedido:$('orderDate').value,status:$('orderStatus').value,observacoes:$('orderObs').value};await busy($('orderSubmit'),'Salvando…',async()=>{await gas('salvarPedidoICP',p);toast('Pedido salvo.');ev.target.reset();$('orderDate').value=new Date().toISOString().slice(0,10)})}
+function applyTheme(theme){document.documentElement.setAttribute('data-theme',theme);localStorage.setItem('ICP_THEME',theme)}
+function toggleTheme(){applyTheme((document.documentElement.getAttribute('data-theme')||'light')==='dark'?'light':'dark')}
+async function loadUsers(){try{State.users=await gas('listarUsuariosICP');renderUsers()}catch(e){toast(e.message,true)}}
+function renderUsers(){if(!$('usersBody'))return;$('usersBody').innerHTML=State.users.map(u=>`<tr><td><strong>${escapeHtml(u.nome)}</strong></td><td>${escapeHtml(u.usuario)}</td><td>${escapeHtml(u.perfil)}</td><td>${u.ativo?'<span class="badge badge-ok">Ativo</span>':'<span class="badge badge-low">Inativo</span>'}</td><td><button class="btn btn-secondary" onclick="editUser('${u.id}')">Editar</button></td></tr>`).join('')}
+function openUserModal(){['userId','userName','userLogin','userPassword'].forEach(id=>$(id).value='');$('userProfile').value='OPERADOR';$('userActive').value='true';$('userPassword').required=true;$('userPasswordHint').textContent='';$('userModalTitle').textContent='Novo usuário';$('userModal').style.display='block'}
+function editUser(id){const u=State.users.find(x=>x.id===id);if(!u)return;$('userId').value=u.id;$('userName').value=u.nome;$('userLogin').value=u.usuario;$('userProfile').value=u.perfil;$('userActive').value=String(u.ativo);$('userPassword').value='';$('userPassword').required=false;$('userPasswordHint').textContent='— deixe em branco para manter';$('userModalTitle').textContent='Editar usuário';$('userModal').style.display='block'}
+async function submitUser(ev){ev.preventDefault();const p={id:$('userId').value,nome:$('userName').value,usuario:$('userLogin').value,perfil:$('userProfile').value,ativo:$('userActive').value==='true',senha:$('userPassword').value};await busy($('userSubmit'),'Salvando…',async()=>{await gas('salvarUsuarioICP',p);$('userModal').style.display='none';await loadUsers();toast('Usuário salvo.')})}
+function openPasswordModal(){$('currentPassword').value='';$('newPassword').value='';$('confirmPassword').value='';$('passwordModal').style.display='block'}
+async function submitPassword(ev){ev.preventDefault();const p={senhaAtual:$('currentPassword').value,novaSenha:$('newPassword').value,confirmacao:$('confirmPassword').value};await busy($('passwordSubmit'),'Alterando…',async()=>{await gas('alterarMinhaSenhaICP',p);$('passwordModal').style.display='none';toast('Senha alterada com sucesso.')})}
 async function busy(btn,text,fn){const old=btn.innerHTML;btn.disabled=true;btn.innerHTML=`<span class="busy"><span class="spinner"></span>${escapeHtml(text)}</span>`;try{return await fn()}catch(e){toast(e.message,true);throw e}finally{btn.disabled=false;btn.innerHTML=old}}
 function toast(msg,error=false){const t=$('toast');t.textContent=msg;t.className='toast show'+(error?' error':'');clearTimeout(t._timer);t._timer=setTimeout(()=>t.className='toast',4000)}
 function fmt(n){return new Intl.NumberFormat('pt-BR',{maximumFractionDigits:3}).format(Number(n)||0)}
