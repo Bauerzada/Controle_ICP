@@ -1,4 +1,4 @@
-const ICP_VERSION = '0.4.0-SUBCONTRATADO-UI';
+const ICP_VERSION = '0.4.1-METHODS-ALIGN';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
