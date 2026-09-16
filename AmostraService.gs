@@ -33,9 +33,9 @@ function registrarAmostraICP(payload) {
       payload.ml === '' || payload.ml == null ? '' : Number(payload.ml),
       payload.itrio || '', payload.tecnico || Session.getActiveUser().getEmail() || ''
     ]]);
-    sh.getRange(row, 2).setNumberFormat('dd/mm/yyyy');
-    sh.getRange(row, 4).setNumberFormat('0');
-    sh.getRange(row, 6, 1, 6).insertCheckboxes().setValues([metodoFlags]);
+    // A planilha de liberação possui colunas com tipo/tabela estruturada.
+    // O formato e os checkboxes já pertencem ao modelo da planilha; não alteramos
+    // metadados/tipos da coluna durante o registro, apenas gravamos os valores.
     SpreadsheetApp.flush();
     try { adicionarFilaPreparoICP_({codigo:codigo.raw,amostra:codigo.idAmostra,embalagem:codigo.embalagem,metodos:metodos,status:payload.liberacao==='Liberado'?'Liberado':'Aguardando preparo',responsavel:payload.tecnico||'',observacoes:payload.observacao||''}); } catch(filaErro) { console.error('Fila de preparo não atualizada: '+filaErro.message); }
     return {ok:true, linha:row, aba:nomeAba, id:codigo.id, embalagem:codigo.embalagem, prefixo:codigo.prefixo, metodos};
