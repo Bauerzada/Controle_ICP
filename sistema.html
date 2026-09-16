@@ -77,6 +77,8 @@
       <button class="nav-btn" data-page="compras">↻ &nbsp; Compras</button>
       <div class="nav-section">Laboratório</div>
       <button class="nav-btn" data-page="preparo">◫ &nbsp; Fila de preparo</button>
+      <button class="nav-btn" data-page="caixas">▤ &nbsp; Caixas e localização</button>
+      <button class="nav-btn" data-page="requisicoes">↗ &nbsp; Requisições</button>
       <button class="nav-btn" data-page="rotina">✓ &nbsp; Rotina e atividades</button>
       <button class="nav-btn" data-page="curvas">⌁ &nbsp; Curvas e padrões</button>
       <button class="nav-btn" data-page="cq">◆ &nbsp; Controle de qualidade</button>
@@ -120,6 +122,7 @@
       <section id="compras" class="page"><div class="hero"><div><h1>Compras</h1><p>Lista automática de baixo estoque e registro do pedido semanal.</p></div></div><div class="grid two"><div class="panel"><h2>Lista automática</h2><div id="buyLow" class="low-list"></div></div><form class="panel" onsubmit="submitOrder(event)"><h2 style="margin-top:0">Novo pedido</h2><div class="field"><label>Item</label><input id="orderItem" required></div><div class="field"><label>Quantidade a comprar</label><input id="orderQty" type="number" min="0" step="any" required></div><div class="field"><label>Fornecedor</label><input id="orderSupplier"></div><div class="row"><div class="field"><label>Data do pedido</label><input id="orderDate" type="date"></div><div class="field"><label>Status</label><select id="orderStatus"><option>Pendente</option><option>Enviado</option><option>Recebido</option></select></div></div><div class="field"><label>Observações</label><textarea id="orderObs"></textarea></div><button class="btn btn-primary" id="orderSubmit">Salvar pedido</button></form></div></section>
 
       <?!= includeICP_('OperationsView'); ?>
+      <?!= includeICP_('LogisticaView'); ?>
 
       <section id="usuarios" class="page"><div class="hero"><div><h1>Usuários</h1><p>Cadastre e gerencie os acessos ao Controle ICP.</p></div><button class="btn btn-primary" onclick="openUserModal()">Novo usuário</button></div><div class="table-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>Status</th><th>Ações</th></tr></thead><tbody id="usersBody"></tbody></table></div></section>
     </main>
@@ -135,13 +138,13 @@
 <script>
 const State={bootstrap:null,stock:[],stockFilter:'Todos',decodeTimer:null,users:[],currentUser:null};
 const $=id=>document.getElementById(id);
-const PAGE_META={dashboard:['Início','Visão geral da operação'],amostras:['Registro de amostra','Liberação e identificação'],estoque:['Controle de estoque','Saldo, consumo e reposição'],compras:['Compras','Itens abaixo do mínimo'],preparo:['Fila de preparo','Rastreabilidade do preparo'],rotina:['Rotina e atividades','Pendências e confirmações'],curvas:['Curvas e padrões','Calibração e consumo'],cq:['Controle de qualidade','CQ e verificações'],sequencias:['Sequências ICP 5110','Planejamento analítico'],equipamento:['Equipamento / erros','Ocorrências e conhecimento'],usuarios:['Usuários','Acessos e permissões']};
+const PAGE_META={dashboard:['Início','Visão geral da operação'],amostras:['Registro de amostra','Liberação e identificação'],estoque:['Controle de estoque','Saldo, consumo e reposição'],compras:['Compras','Itens abaixo do mínimo'],preparo:['Fila de preparo','Rastreabilidade do preparo'],caixas:['Caixas e localização','Rastreabilidade física'],requisicoes:['Requisições','Insumos e acompanhamento'],rotina:['Rotina e atividades','Pendências e confirmações'],curvas:['Curvas e padrões','Calibração e consumo'],cq:['Controle de qualidade','CQ e verificações'],sequencias:['Sequências ICP 5110','Planejamento analítico'],equipamento:['Equipamento / erros','Ocorrências e conhecimento'],usuarios:['Usuários','Acessos e permissões']};
 document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('nav .nav-btn[data-page]').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page,btn)));const today=new Date();$('sampleDate').value=today.toISOString().slice(0,10);$('orderDate').value=today.toISOString().slice(0,10);updateThemeLabels();AuthEngineICP.boot().catch(e=>toast(e.message,true));});
 function gas(name,...args){return ActionEngineICP.run(name,args)}
 async function showPage(page,btn){if(!page||!$(page))return;if(page==='usuarios')await loadUsers();document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(page).classList.add('active');document.querySelectorAll('nav .nav-btn[data-page]').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');const meta=PAGE_META[page]||['Controle ICP',''];$('topbarPageTitle').textContent=meta[0];$('topbarPageSub').textContent=meta[1];if(page==='amostras')setTimeout(()=>$('sampleCode').focus(),60)}
-async function loadBootstrap(){try{const session=await ActionEngineICP.direct('validarSessaoICP',[AuthEngineICP.token()]);State.currentUser=session&&session.usuario||null;const isAdmin=State.currentUser&&State.currentUser.perfil==='ADMINISTRADOR';document.querySelectorAll('.admin-only').forEach(x=>x.style.display=isAdmin?'block':'none');if(State.currentUser){$('topbarUser').textContent=State.currentUser.nome;$('topbarProfile').textContent=State.currentUser.perfil;$('currentUser').textContent=State.currentUser.nome+' · '+State.currentUser.perfil}const data=await gas('getBootstrapICP');State.bootstrap=data;State.stock=data.estoque||[];$('version').textContent=data.version;$('currentSheet').textContent=data.abaLiberacaoAtual;renderMethods(data.metodos||[]);renderCategories(data.categorias||[]);renderAll();if(window.OpsICP)await OpsICP.load()}catch(e){toast(e.message,true)}}
+async function loadBootstrap(){try{const session=await ActionEngineICP.direct('validarSessaoICP',[AuthEngineICP.token()]);State.currentUser=session&&session.usuario||null;const isAdmin=State.currentUser&&State.currentUser.perfil==='ADMINISTRADOR';document.querySelectorAll('.admin-only').forEach(x=>x.style.display=isAdmin?'block':'none');if(State.currentUser){$('topbarUser').textContent=State.currentUser.nome;$('topbarProfile').textContent=State.currentUser.perfil;$('currentUser').textContent=State.currentUser.nome+' · '+State.currentUser.perfil}const data=await gas('getBootstrapICP');State.bootstrap=data;State.stock=data.estoque||[];$('version').textContent=data.version;$('currentSheet').textContent=data.abaLiberacaoAtual;renderMethods(data.metodos||[]);renderCategories(data.categorias||[]);renderAll();applyRoleVisibility();if(window.OpsICP)await OpsICP.load();if(window.LogICP)await LogICP.load()}catch(e){toast(e.message,true)}}
 async function refreshAll(btn){return busy(btn,'Atualizando…',async()=>{await loadBootstrap();toast('Dados atualizados.')})}
-function renderAll(){renderKpis();renderStock();renderLowLists()}
+function applyRoleVisibility(){const role=State.currentUser&&State.currentUser.perfil;const manager=role==='ADMINISTRADOR'||role==='GESTOR';document.querySelectorAll('.manager-only').forEach(x=>x.style.display=manager?'':'none')} function renderAll(){renderKpis();renderStock();renderLowLists()}
 function renderKpis(){const r=State.bootstrap&&State.bootstrap.resumo||{};$('kpiItens').textContent=r.itens??0;$('kpiBaixo').textContent=r.baixo??0;$('kpiOk').textContent=r.ok??0;$('kpiMinimo').textContent=r.definirMinimo??0}
 function renderMethods(methods){$('methods').innerHTML=methods.map(m=>`<button type="button" class="method" data-method="${escapeHtml(m)}" aria-pressed="false" onclick="toggleMethod(this)">${escapeHtml(m)}</button>`).join('')}
 function toggleMethod(btn){const selected=!btn.classList.contains('selected');btn.classList.toggle('selected',selected);btn.setAttribute('aria-pressed',String(selected))}
@@ -179,5 +182,6 @@ function fmt(n){return new Intl.NumberFormat('pt-BR',{maximumFractionDigits:3}).
 function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 </script>
 <?!= includeICP_('OperationsEngine'); ?>
+<?!= includeICP_('LogisticaEngine'); ?>
 </body>
 </html>
