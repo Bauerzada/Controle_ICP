@@ -1,0 +1,11 @@
+<script>
+(function(g){const S={req:[],boxes:[]},e=id=>document.getElementById(id),esc=v=>g.escapeHtml(v);
+async function load(){try{const d=await Promise.all([g.gas('listarRequisicoesICP'),g.gas('listarCaixasICP')]);S.req=d[0]||[];S.boxes=d[1]||[];render()}catch(x){g.toast(x.message,true)}}
+function render(){if(e('reqBody'))e('reqBody').innerHTML=S.req.map(x=>'<tr><td><strong>'+esc(x.numero)+'</strong></td><td>'+esc(x.item)+'</td><td>'+esc(x.categoria)+'</td><td>'+g.badge(x.status)+'</td><td>'+esc(x.responsavel)+'</td><td>'+esc(x.observacoes)+'</td><td><button class="btn manager-only" onclick="LogICP.advanceReq('+x.linha+')">Avançar</button></td></tr>').join('')||'<tr><td colspan="7"><div class="empty">Nenhuma requisição.</div></td></tr>';
+if(e('boxBody')){const q=(e('boxSearch').value||'').toLowerCase(),l=S.boxes.filter(x=>!q||[x.Caixa,x.Amostra,x.Embalagem].join(' ').toLowerCase().includes(q));e('boxCount').textContent=l.length+' registro(s)';e('boxBody').innerHTML=l.map(x=>'<tr><td><strong>'+esc(x.Caixa)+'</strong></td><td>'+esc(x.Amostra)+'</td><td>'+esc(x.Embalagem)+'</td><td>'+g.badge(x.Status)+'</td><td>'+esc(x['Responsável'])+'</td><td>'+esc(x.Data)+'</td><td>'+esc(x['Observações'])+'</td></tr>').join('')||'<tr><td colspan="7"><div class="empty">Nenhuma localização.</div></td></tr>'}if(g.applyRoleVisibility)g.applyRoleVisibility()}
+async function advanceReq(linha){const x=S.req.find(v=>v.linha===linha);if(!x)return;const order=['Pendente','Em cotação','Comprado','Entregue'],i=Math.max(0,order.indexOf(x.status)),status=order[Math.min(i+1,order.length-1)];await g.gas('atualizarRequisicaoICP',{linha,status,responsavel:(g.State.currentUser||{}).nome||x.responsavel,observacoes:x.observacoes});await load();g.toast('Requisição atualizada para '+status+'.')}
+function openBox(){e('boxModal').style.display='block'}function closeBox(){e('boxModal').style.display='none'}
+async function saveBox(ev){ev.preventDefault();await g.busy(e('bxSave'),'Registrando…',async()=>{await g.gas('registrarCaixaICP',{caixa:e('bxBox').value,amostra:e('bxSample').value,embalagem:e('bxPack').value,status:e('bxStatus').value,responsavel:e('bxResp').value,observacoes:e('bxObs').value});closeBox();await load();g.toast('Localização registrada.')})}
+g.LogICP={load,render,advanceReq,openBox,closeBox,saveBox};
+})(window);
+</script>
