@@ -1,0 +1,4 @@
+function listarCurvasICP_(){return opsRows_('curvas').reverse().slice(0,300)}
+function registrarCurvaICP_(p){p=p||{};if(!p.tipo||!p.identificacao)throw new Error('Informe tipo e identificação da curva.');const id=novoIdICP_('CURVA'),vol=Number(String(p.volume||'0').replace(',','.'))||0;
+ if(p.estoqueId&&vol>0)registrarMovimentacaoEstoqueICP({id:p.estoqueId,tipo:'SAIDA',quantidade:vol,embalagens:0,responsavel:p.responsavel||'',observacoes:'Consumo automático da curva '+p.identificacao+' ('+id+')'});
+ opsAppend_('curvas',{'ID':id,'Tipo':textoICP_(p.tipo,80),'Identificação':textoICP_(p.identificacao,120),'Padrão/Item estoque':textoICP_(p.estoqueId,80),'Volume consumido':vol,'Unidade':textoICP_(p.unidade,30),'Responsável':textoICP_(p.responsavel,100),'Status':p.status||'Preparada','Data':p.data||new Date(),'Observações':textoICP_(p.observacoes,500),'Criado em':agoraISOICP_()});return {ok:true,id}}
