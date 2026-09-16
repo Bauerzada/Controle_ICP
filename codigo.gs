@@ -1,4 +1,4 @@
-const ICP_VERSION = '0.1.1-PREPARO-MODULAR';
+const ICP_VERSION = '0.2.0-AUTH-MODULAR';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
@@ -6,50 +6,36 @@ const ICP_CONFIG = Object.freeze({
   estoqueOrigemXlsxId: '1MAdbJDibPeg5fAhukQ5i5ILTpnFHVHUb',
   estoqueBancoNome: 'Controle ICP - Banco de Estoque',
   estoqueBancoIdProperty: 'ICP_ESTOQUE_BANCO_ID',
-  abas: {
-    estoque: 'Estoque',
-    movimentacoes: 'Movimentações',
-    pedidos: 'Pedidos'
-  },
+  abas: {estoque:'Estoque',movimentacoes:'Movimentações',pedidos:'Pedidos'},
   metodos: ['Total','Gerador','Dissolvido','Dissolvido Gerador','Urânio','Urânio Dissolvido'],
   categorias: ['Consumível','Solução','Padrão','Insumo','Reagente','Outro']
 });
 
+function includeICP_(name) { return HtmlService.createHtmlOutputFromFile(name).getContent(); }
 function doGet() {
-  return HtmlService.createHtmlOutputFromFile('sistema')
+  return HtmlService.createTemplateFromFile('sistema').evaluate()
     .setTitle('Controle ICP')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
-
-function getBootstrapICP() {
+function getBootstrapICP() { throw new Error('Acesso direto bloqueado. Use uma sessão autenticada.'); }
+function getBootstrapICP_() {
   const estoque = getEstoqueICP_();
-  return {
-    version: ICP_VERSION,
-    metodos: ICP_CONFIG.metodos.slice(),
-    categorias: ICP_CONFIG.categorias.slice(),
-    estoque: estoque,
-    resumo: buildResumoEstoque_(estoque),
-    abaLiberacaoAtual: nomeAbaMes_(new Date())
-  };
+  return {version:ICP_VERSION,metodos:ICP_CONFIG.metodos.slice(),categorias:ICP_CONFIG.categorias.slice(),estoque:estoque,resumo:buildResumoEstoque_(estoque),abaLiberacaoAtual:nomeAbaMes_(new Date())};
 }
-
 function instalarControleICP() {
-  const ss = getOrCreateEstoqueBanco_();
+  const ss=getOrCreateEstoqueBanco_();
   return {ok:true,mensagem:'Banco de estoque preparado.',spreadsheetId:ss.getId(),url:ss.getUrl()};
 }
-
 function numeroNaoNegativo_(value,label) {
-  const n = Number(String(value == null ? '' : value).replace(',','.'));
-  if (!isFinite(n) || n < 0) throw new Error(label + ' deve ser um número maior ou igual a zero.');
+  const n=Number(String(value==null?'':value).replace(',','.'));
+  if(!isFinite(n)||n<0)throw new Error(label+' deve ser um número maior ou igual a zero.');
   return n;
 }
-
 function nomeAbaMes_(date) {
-  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   return meses[date.getMonth()];
 }
-
 function formatarDataHora_(date) {
-  if (!date) return '';
-  return Utilities.formatDate(new Date(date),Session.getScriptTimeZone() || 'America/Sao_Paulo','dd/MM/yyyy HH:mm');
+  if(!date)return '';
+  return Utilities.formatDate(new Date(date),Session.getScriptTimeZone()||'America/Sao_Paulo','dd/MM/yyyy HH:mm');
 }
