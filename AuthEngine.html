@@ -1,0 +1,21 @@
+<script>
+(function(global){
+  var KEY='ICP_SESSION_TOKEN';
+  function token(){return sessionStorage.getItem(KEY)||''}
+  function setToken(v){if(v)sessionStorage.setItem(KEY,v);else sessionStorage.removeItem(KEY)}
+  function direct(name,args){return global.ActionEngineICP.direct(name,args||[])}
+  function requireLogin(){setToken('');document.getElementById('authGate').style.display='grid';document.getElementById('appRoot').style.display='none';}
+  function enter(user){document.getElementById('authGate').style.display='none';document.getElementById('appRoot').style.display='grid';var el=document.getElementById('currentUser');if(el)el.textContent=user.nome+' · '+user.perfil;}
+  async function boot(){
+    var meta=await direct('getAuthBootstrapICP');
+    document.getElementById('setupBox').style.display=meta.instalado?'none':'block';
+    document.getElementById('loginBox').style.display=meta.instalado?'block':'none';
+    if(meta.instalado&&token()){var v=await direct('validarSessaoICP',[token()]);if(v&&v.ok){enter(v.usuario);global.loadBootstrap();return}}
+    requireLogin();
+  }
+  async function login(ev){ev.preventDefault();var r=await direct('loginICP',[{usuario:document.getElementById('loginUser').value,senha:document.getElementById('loginPass').value}]);setToken(r.token);enter(r.usuario);global.loadBootstrap();}
+  async function setup(ev){ev.preventDefault();var r=await direct('instalarAdministradorICP',[{nome:document.getElementById('setupName').value,usuario:document.getElementById('setupUser').value,senha:document.getElementById('setupPass').value}]);setToken(r.token);enter(r.usuario);global.loadBootstrap();}
+  async function logout(){try{await direct('logoutICP',[token()])}finally{requireLogin()}}
+  global.AuthEngineICP={boot:boot,login:login,setup:setup,logout:logout,token:token,requireLogin:requireLogin};
+})(window);
+</script>
