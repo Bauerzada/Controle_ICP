@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Controle ICP</title>
+  <style>
+    :root{
+      --primary:#2563EB;--secondary:#475569;--background:#F8FAFC;--surface:#FFFFFF;--text:#0F172A;
+      --success:#16A34A;--error:#DC2626;--warning:#D97706;--border:#E2E8F0;--muted:#64748B;
+      --shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--background);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:1rem;font-weight:400;line-height:1.5}
+    h1,h2,h3{margin:0;color:var(--text);font-weight:600} h1{font-size:2rem} h2{font-size:1.5rem} small{font-size:.875rem}
+    button,a,input,select,textarea{font:inherit} button,a{transition:all .2s ease-in-out} button:hover,a:hover{opacity:.9}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+    .app{min-height:100vh;display:grid;grid-template-columns:248px 1fr}
+    aside{background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:24px}
+    .brand{display:flex;align-items:center;gap:12px;padding:0 8px}.logo{width:40px;height:40px;border-radius:12px;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:700}.brand small{display:block;color:var(--muted)}
+    nav{display:flex;flex-direction:column;gap:8px}.nav-btn{border:0;background:transparent;color:var(--secondary);padding:12px 16px;border-radius:6px;text-align:left;cursor:pointer}.nav-btn.active{background:#EFF6FF;color:var(--primary);font-weight:600}
+    main{padding:32px;min-width:0}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.topbar p{margin:4px 0 0;color:var(--muted)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:6px;padding:10px 16px;cursor:pointer;font-weight:600}.btn-primary{background:var(--primary);color:#fff}.btn-secondary{background:#E2E8F0;color:var(--text)}.btn-danger{background:var(--error);color:#fff}.btn:disabled{opacity:.55;cursor:not-allowed}
+    .grid{display:grid;gap:16px}.kpis{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:24px}.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:24px}.kpi-label{color:var(--muted);font-size:.875rem}.kpi-value{font-size:1.75rem;font-weight:600;margin-top:4px}.danger{color:var(--error)}.success{color:var(--success)}
+    .page{display:none}.page.active{display:block}.two{grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr)}
+    label{display:block;font-size:.875rem;font-weight:600;margin-bottom:6px}.field{margin-bottom:16px}.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    input,select,textarea{width:100%;border:1px solid #CBD5E1;background:#fff;color:var(--text);border-radius:6px;padding:10px 12px;transition:all .2s ease-in-out}textarea{min-height:88px;resize:vertical}
+    .scan{font-size:1.2rem;padding:14px 16px}.methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.method{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:6px;padding:10px 12px;cursor:pointer}.method input{width:auto;margin:0}
+    .preview{background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:12px;padding:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.preview strong{display:block}.preview span{color:var(--muted);font-size:.875rem}
+    .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{width:100%;border-collapse:collapse;min-width:900px;background:#fff}th,td{padding:12px 16px;border-bottom:1px solid var(--border);text-align:left;vertical-align:middle}th{font-size:.875rem;background:#F8FAFC;position:sticky;top:0}td{font-size:.875rem}.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;font-size:.75rem;font-weight:600}.badge-ok{background:#DCFCE7;color:#166534}.badge-low{background:#FEE2E2;color:#991B1B}.badge-warn{background:#FEF3C7;color:#92400E}
+    .toolbar{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:16px}.toolbar input{max-width:360px}.tabs{display:flex;gap:8px;margin-bottom:16px}.tab{border:1px solid var(--border);background:#fff;border-radius:6px;padding:8px 12px;cursor:pointer}.tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    .low-list{display:flex;flex-direction:column;gap:8px}.low-item{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+    .empty{padding:32px;text-align:center;color:var(--muted)}.toast{position:fixed;right:24px;bottom:24px;max-width:420px;background:var(--text);color:#fff;padding:12px 16px;border-radius:6px;box-shadow:var(--shadow);display:none;z-index:50}.toast.show{display:block}.toast.error{background:var(--error)}
+    .busy{display:inline-flex;gap:8px;align-items:center}.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:1000px){.app{grid-template-columns:1fr}aside{position:sticky;top:0;z-index:10;padding:12px 16px;border-right:0;border-bottom:1px solid var(--border)}.brand{display:none}nav{flex-direction:row;overflow:auto}.nav-btn{white-space:nowrap}main{padding:20px}.two,.kpis{grid-template-columns:1fr 1fr}}
+    @media(max-width:680px){.two,.kpis,.row,.methods,.preview{grid-template-columns:1fr}.topbar,.toolbar{align-items:flex-start;flex-direction:column}.toolbar input{max-width:none}main{padding:16px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand"><div class="logo">ICP</div><div><strong>Controle ICP</strong><small id="version">Carregando…</small></div></div>
+    <nav>
+      <button class="nav-btn active" data-page="dashboard">Visão geral</button>
+      <button class="nav-btn" data-page="amostras">Registro de amostra</button>
+      <button class="nav-btn" data-page="estoque">Controle de estoque</button>
+      <button class="nav-btn" data-page="compras">Compras</button>
+    </nav>
+  </aside>
+  <main>
+    <section id="dashboard" class="page active">
+      <div class="topbar"><div><h1>Visão geral</h1><p>Preparo do ICP — metais</p></div><div class="actions"><button class="btn btn-secondary" onclick="refreshAll(this)">Atualizar</button></div></div>
+      <div class="grid kpis">
+        <div class="card"><div class="kpi-label">Itens cadastrados</div><div class="kpi-value" id="kpiItens">—</div></div>
+        <div class="card"><div class="kpi-label">Baixo estoque</div><div class="kpi-value danger" id="kpiBaixo">—</div></div>
+        <div class="card"><div class="kpi-label">Estoque OK</div><div class="kpi-value success" id="kpiOk">—</div></div>
+        <div class="card"><div class="kpi-label">Sem mínimo definido</div><div class="kpi-value" id="kpiMinimo">—</div></div>
+      </div>
+      <div class="grid two">
+        <div class="card"><h2>Alertas de estoque</h2><p style="color:var(--muted)">Itens cuja quantidade atual está igual ou abaixo do mínimo.</p><div id="dashboardLow" class="low-list"></div></div>
+        <div class="card"><h2>Liberação atual</h2><p style="color:var(--muted)">Registros de amostra serão gravados na aba mensal correspondente à data.</p><div class="preview"><div><span>Aba atual</span><strong id="currentSheet">—</strong></div><div><span>Métodos</span><strong>6 opções</strong></div><div><span>Bipagem</span><strong>10/12 dígitos</strong></div></div></div>
+      </div>
+    </section>
+
+    <section id="amostras" class="page">
+      <div class="topbar"><div><h1>Registro de amostra</h1><p>Bipe a embalagem, confira o ID e selecione um ou mais métodos.</p></div></div>
+      <div class="grid two">
+        <form class="card" id="sampleForm" onsubmit="submitSample(event)">
+          <div class="field"><label for="sampleCode">Código / bipagem</label><input id="sampleCode" class="scan" autocomplete="off" inputmode="numeric" placeholder="Bipe aqui…" oninput="decodeSampleDebounced()"></div>
+          <div class="preview" style="margin-bottom:16px"><div><span>Prefixo</span><strong id="pvPrefix">—</strong></div><div><span>ID amostra</span><strong id="pvSample">—</strong></div><div><span>Embalagem</span><strong id="pvPackage">—</strong></div></div>
+          <div class="field"><label>Métodos solicitados</label><div class="methods" id="methods"></div></div>
+          <div class="row"><div class="field"><label for="sampleDate">Data</label><input type="date" id="sampleDate"></div><div class="field"><label for="sampleStatus">Liberação</label><select id="sampleStatus"><option>Pendente</option><option>Liberado</option></select></div></div>
+          <div class="row"><div class="field"><label for="sampleCQ">CQ</label><input id="sampleCQ"></div><div class="field"><label for="sampleTech">Técnico</label><input id="sampleTech"></div></div>
+          <div class="row"><div class="field"><label for="sampleDilution">Diluição</label><input id="sampleDilution"></div><div class="field"><label for="sampleMl">mL</label><input id="sampleMl" type="number" min="0" step="any"></div></div>
+          <div class="field"><label for="sampleItrio">Ítrio</label><input id="sampleItrio"></div>
+          <div class="field"><label for="sampleObs">Observação</label><textarea id="sampleObs"></textarea></div>
+          <button class="btn btn-primary" id="sampleSubmit" type="submit">Registrar amostra</button>
+        </form>
+        <div class="card"><h2>Regras da bipagem</h2><p>O sistema aceita o ID histórico de 10 dígitos ou uma leitura de 12 dígitos contendo prefixo de 2 dígitos.</p><p><strong>Composição usada nesta primeira versão:</strong> 6 dígitos de amostra + 4 dígitos de embalagem. Se o leitor enviar prefixo, os 2 primeiros dígitos são destacados separadamente.</p><p style="color:var(--muted)">A regra foi isolada no backend para conseguirmos ajustá-la sem alterar toda a interface durante os testes.</p></div>
+      </div>
+    </section>
+
+    <section id="estoque" class="page">
+      <div class="topbar"><div><h1>Controle de estoque</h1><p>Cadastro, reposição, consumo e alertas de mínimo.</p></div><div class="actions"><button class="btn btn-primary" onclick="openNewItem()">Cadastrar item</button></div></div>
+      <div class="tabs"><button class="tab active" data-filter="Todos" onclick="filterStock(this)">Todos</button><button class="tab" data-filter="Baixo estoque" onclick="filterStock(this)">Baixo estoque</button><button class="tab" data-filter="Definir mínimo" onclick="filterStock(this)">Sem mínimo</button></div>
+      <div class="toolbar"><input id="stockSearch" placeholder="Buscar item, lote ou categoria" oninput="renderStock()"><small id="stockCount"></small></div>
+      <div class="table-wrap"><table><thead><tr><th>Categoria</th><th>Item</th><th>Lote</th><th>Unidade</th><th>Qtd.</th><th>Embalagens</th><th>Mínimo</th><th>Status</th><th>Atualização</th><th>Ações</th></tr></thead><tbody id="stockBody"></tbody></table></div>
+    </section>
+
+    <section id="compras" class="page">
+      <div class="topbar"><div><h1>Compras</h1><p>Lista automática de baixo estoque e registro do pedido semanal.</p></div></div>
+      <div class="grid two">
+        <div class="card"><h2>Lista automática</h2><div id="buyLow" class="low-list"></div></div>
+        <form class="card" onsubmit="submitOrder(event)"><h2 style="margin-bottom:16px">Novo pedido</h2><div class="field"><label>Item</label><input id="orderItem" required></div><div class="field"><label>Quantidade a comprar</label><input id="orderQty" type="number" min="0" step="any" required></div><div class="field"><label>Fornecedor</label><input id="orderSupplier"></div><div class="row"><div class="field"><label>Data do pedido</label><input id="orderDate" type="date"></div><div class="field"><label>Status</label><select id="orderStatus"><option>Pendente</option><option>Enviado</option><option>Recebido</option></select></div></div><div class="field"><label>Observações</label><textarea id="orderObs"></textarea></div><button class="btn btn-primary" id="orderSubmit">Salvar pedido</button></form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="itemModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40;padding:24px;overflow:auto">
+  <form class="card" style="max-width:720px;margin:40px auto" onsubmit="submitItem(event)">
+    <div class="topbar"><div><h2 id="itemModalTitle">Cadastrar item</h2></div><button type="button" class="btn btn-secondary" onclick="closeItemModal()">Fechar</button></div>
+    <input type="hidden" id="itemId">
+    <div class="row"><div class="field"><label>Categoria</label><select id="itemCategory"></select></div><div class="field"><label>Item</label><input id="itemName" required></div></div>
+    <div class="row"><div class="field"><label>Lote</label><input id="itemLot"></div><div class="field"><label>Unidade</label><input id="itemUnit" required></div></div>
+    <div class="row"><div class="field"><label>Quantidade em estoque</label><input id="itemQty" type="number" min="0" step="any" required></div><div class="field"><label>Qtde de lotes/embalagens</label><input id="itemPackages" type="number" min="0" step="any" required></div></div>
+    <div class="row"><div class="field"><label>Estoque mínimo</label><input id="itemMin" type="number" min="0" step="any"></div><div class="field"><label>Responsável</label><input id="itemResponsible"></div></div>
+    <div class="field"><label>Observações</label><textarea id="itemObs"></textarea></div><button class="btn btn-primary" id="itemSubmit">Salvar item</button>
+  </form>
+</div>
+
+<div id="moveModal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:40;padding:24px;overflow:auto">
+  <form class="card" style="max-width:600px;margin:40px auto" onsubmit="submitMove(event)"><div class="topbar"><div><h2>Movimentar estoque</h2><p id="moveName"></p></div><button type="button" class="btn btn-secondary" onclick="closeMoveModal()">Fechar</button></div><input id="moveId" type="hidden"><div class="field"><label>Tipo</label><select id="moveType"><option value="SAIDA">Saída / consumo</option><option value="ENTRADA">Entrada / reposição</option><option value="AJUSTE">Ajuste de saldo</option></select></div><div class="row"><div class="field"><label>Quantidade</label><input id="moveQty" type="number" min="0" step="any" required></div><div class="field"><label>Embalagens</label><input id="movePackages" type="number" min="0" step="any" value="0"></div></div><div class="field"><label>Responsável</label><input id="moveResponsible"></div><div class="field"><label>Observações</label><textarea id="moveObs"></textarea></div><button class="btn btn-primary" id="moveSubmit">Registrar movimentação</button></form>
+</div>
+
+<script>
+const State={bootstrap:null,stock:[],stockFilter:'Todos',decodeTimer:null};
+const $=id=>document.getElementById(id);
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>showPage(btn.dataset.page,btn)));
+  const today=new Date(); $('sampleDate').value=today.toISOString().slice(0,10); $('orderDate').value=today.toISOString().slice(0,10);
+  loadBootstrap();
+});
+
+function gas(name,...args){
+  return new Promise((resolve,reject)=>{
+    const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(err=>reject(new Error(err&&err.message?err.message:String(err))));
+    runner[name](...args);
+  });
+}
+function showPage(page,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(page).classList.add('active');document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));btn.classList.add('active');if(page==='amostras')setTimeout(()=>$('sampleCode').focus(),50)}
+async function loadBootstrap(){try{const data=await gas('getBootstrapICP');State.bootstrap=data;State.stock=data.estoque||[];$('version').textContent=data.version;$('currentSheet').textContent=data.abaLiberacaoAtual;renderMethods(data.metodos||[]);renderCategories(data.categorias||[]);renderAll()}catch(e){toast(e.message,true)}}
+async function refreshAll(btn){return busy(btn,'Atualizando…',async()=>{await loadBootstrap();toast('Dados atualizados.')})}
+function renderAll(){renderKpis();renderStock();renderLowLists()}
+function renderKpis(){const r=State.bootstrap&&State.bootstrap.resumo||{};$('kpiItens').textContent=r.itens??0;$('kpiBaixo').textContent=r.baixo??0;$('kpiOk').textContent=r.ok??0;$('kpiMinimo').textContent=r.definirMinimo??0}
+function renderMethods(methods){$('methods').innerHTML=methods.map((m,i)=>`<label class="method"><input type="checkbox" name="method" value="${escapeHtml(m)}"><span>${escapeHtml(m)}</span></label>`).join('')}
+function renderCategories(cats){$('itemCategory').innerHTML=cats.map(c=>`<option>${escapeHtml(c)}</option>`).join('')}
+function decodeSampleDebounced(){clearTimeout(State.decodeTimer);State.decodeTimer=setTimeout(decodeSample,180)}
+async function decodeSample(){const v=$('sampleCode').value.trim();if(!v){setPreview(null);return}try{setPreview(await gas('interpretarCodigoICP',v))}catch(e){setPreview(null)}}
+function setPreview(x){$('pvPrefix').textContent=x&&x.prefixo||'—';$('pvSample').textContent=x&&x.idAmostra||'—';$('pvPackage').textContent=x&&x.embalagem||'—'}
+async function submitSample(ev){ev.preventDefault();const btn=$('sampleSubmit');const methods=[...document.querySelectorAll('input[name="method"]:checked')].map(x=>x.value);const payload={codigo:$('sampleCode').value,metodos,data:$('sampleDate').value,liberacao:$('sampleStatus').value,cq:$('sampleCQ').value,tecnico:$('sampleTech').value,diluicao:$('sampleDilution').value,ml:$('sampleMl').value,itrio:$('sampleItrio').value,observacao:$('sampleObs').value};await busy(btn,'Registrando…',async()=>{const r=await gas('registrarAmostraICP',payload);toast(`Amostra ${r.id} registrada em ${r.aba}, linha ${r.linha}.`);$('sampleForm').reset();$('sampleDate').value=new Date().toISOString().slice(0,10);setPreview(null);$('sampleCode').focus()})}
+function stockFiltered(){const q=$('stockSearch').value.trim().toLowerCase();return State.stock.filter(i=>(State.stockFilter==='Todos'||i.status===State.stockFilter)&&(!q||[i.item,i.lote,i.categoria].join(' ').toLowerCase().includes(q)))}
+function filterStock(btn){State.stockFilter=btn.dataset.filter;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');renderStock()}
+function renderStock(){if(!$('stockBody'))return;const list=stockFiltered();$('stockCount').textContent=`${list.length} item(ns)`;$('stockBody').innerHTML=list.length?list.map(i=>`<tr><td>${escapeHtml(i.categoria)}</td><td><strong>${escapeHtml(i.item)}</strong></td><td>${escapeHtml(i.lote)}</td><td>${escapeHtml(i.unidade)}</td><td>${fmt(i.quantidade)}</td><td>${fmt(i.embalagens)}</td><td>${i.minimo===''?'—':fmt(i.minimo)}</td><td>${badge(i.status)}</td><td>${escapeHtml(i.ultimaAtualizacao||'')}</td><td><div class="actions"><button class="btn btn-secondary" onclick="editItem('${i.id}')">Editar</button><button class="btn btn-primary" onclick="openMove('${i.id}')">Movimentar</button></div></td></tr>`).join(''):`<tr><td colspan="10"><div class="empty">Nenhum item encontrado.</div></td></tr>`}
+function renderLowLists(){const low=State.stock.filter(i=>i.status==='Baixo estoque');const html=low.length?low.map(i=>`<div class="low-item"><div><strong>${escapeHtml(i.item)}</strong><small style="display:block;color:var(--muted)">${escapeHtml(i.lote)} · ${escapeHtml(i.unidade)}</small></div><div style="text-align:right"><strong class="danger">${fmt(i.quantidade)}</strong><small style="display:block;color:var(--muted)">mín. ${fmt(i.minimo)}</small></div></div>`).join(''):`<div class="empty">Nenhum item em baixo estoque.</div>`;$('dashboardLow').innerHTML=html;$('buyLow').innerHTML=html}
+function badge(s){const c=s==='OK'?'badge-ok':s==='Baixo estoque'?'badge-low':'badge-warn';return `<span class="badge ${c}">${escapeHtml(s)}</span>`}
+function openNewItem(){['itemId','itemName','itemLot','itemUnit','itemQty','itemPackages','itemMin','itemResponsible','itemObs'].forEach(id=>$(id).value='');$('itemModalTitle').textContent='Cadastrar item';$('itemCategory').selectedIndex=0;$('itemModal').style.display='block'}
+function editItem(id){const i=State.stock.find(x=>x.id===id);if(!i)return;$('itemId').value=i.id;$('itemCategory').value=i.categoria;$('itemName').value=i.item;$('itemLot').value=i.lote;$('itemUnit').value=i.unidade;$('itemQty').value=i.quantidade;$('itemPackages').value=i.embalagens;$('itemMin').value=i.minimo;$('itemResponsible').value=i.responsavel;$('itemObs').value=i.observacoes;$('itemModalTitle').textContent='Editar item';$('itemModal').style.display='block'}
+function closeItemModal(){$('itemModal').style.display='none'}
+async function submitItem(ev){ev.preventDefault();const p={id:$('itemId').value,categoria:$('itemCategory').value,item:$('itemName').value,lote:$('itemLot').value,unidade:$('itemUnit').value,quantidade:$('itemQty').value,embalagens:$('itemPackages').value,minimo:$('itemMin').value,responsavel:$('itemResponsible').value,observacoes:$('itemObs').value};await busy($('itemSubmit'),'Salvando…',async()=>{await gas('salvarItemEstoqueICP',p);closeItemModal();await loadBootstrap();toast('Item salvo.')})}
+function openMove(id){const i=State.stock.find(x=>x.id===id);if(!i)return;$('moveId').value=id;$('moveName').textContent=`${i.item} — saldo ${fmt(i.quantidade)} ${i.unidade}`;$('moveQty').value='';$('movePackages').value='0';$('moveResponsible').value='';$('moveObs').value='';$('moveModal').style.display='block'}
+function closeMoveModal(){$('moveModal').style.display='none'}
+async function submitMove(ev){ev.preventDefault();const p={id:$('moveId').value,tipo:$('moveType').value,quantidade:$('moveQty').value,embalagens:$('movePackages').value,responsavel:$('moveResponsible').value,observacoes:$('moveObs').value};await busy($('moveSubmit'),'Registrando…',async()=>{await gas('registrarMovimentacaoEstoqueICP',p);closeMoveModal();await loadBootstrap();toast('Movimentação registrada.')})}
+async function submitOrder(ev){ev.preventDefault();const p={item:$('orderItem').value,quantidade:$('orderQty').value,fornecedor:$('orderSupplier').value,dataPedido:$('orderDate').value,status:$('orderStatus').value,observacoes:$('orderObs').value};await busy($('orderSubmit'),'Salvando…',async()=>{await gas('salvarPedidoICP',p);toast('Pedido salvo.');ev.target.reset();$('orderDate').value=new Date().toISOString().slice(0,10)})}
+async function busy(btn,text,fn){const old=btn.innerHTML;btn.disabled=true;btn.innerHTML=`<span class="busy"><span class="spinner"></span>${escapeHtml(text)}</span>`;try{return await fn()}catch(e){toast(e.message,true);throw e}finally{btn.disabled=false;btn.innerHTML=old}}
+function toast(msg,error=false){const t=$('toast');t.textContent=msg;t.className='toast show'+(error?' error':'');clearTimeout(t._timer);t._timer=setTimeout(()=>t.className='toast',4000)}
+function fmt(n){return new Intl.NumberFormat('pt-BR',{maximumFractionDigits:3}).format(Number(n)||0)}
+function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+</script>
+</body>
+</html>
