@@ -1,4 +1,4 @@
-const ICP_VERSION = '1.0.3-OPS-STATE-HOTFIX';
+const ICP_VERSION = '1.0.4-PREP-RECONCILE';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
