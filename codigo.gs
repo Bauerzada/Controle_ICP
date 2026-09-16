@@ -1,4 +1,4 @@
-const ICP_VERSION = '1.0.0-MODULAR-SUITE';
+const ICP_VERSION = '1.0.1-SAMPLE-SUBMIT-HOTFIX';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
