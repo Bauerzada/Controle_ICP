@@ -1,0 +1,20 @@
+<script>
+(function(global){
+  function callDirect(name,args){
+    return new Promise(function(resolve,reject){
+      var r=google.script.run.withSuccessHandler(resolve).withFailureHandler(function(e){reject(new Error(e&&e.message?e.message:String(e)))});
+      r[name].apply(r,args||[]);
+    });
+  }
+  global.ActionEngineICP={
+    run:function(action,args){
+      var token=global.AuthEngineICP&&global.AuthEngineICP.token?global.AuthEngineICP.token():'';
+      return callDirect('executarAcaoICP',[token,action,args||[]]).catch(function(err){
+        if(/sessão expirada|sem acesso/i.test(err.message||'')&&global.AuthEngineICP) global.AuthEngineICP.requireLogin();
+        throw err;
+      });
+    },
+    direct:callDirect
+  };
+})(window);
+</script>
