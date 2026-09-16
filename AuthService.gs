@@ -82,7 +82,15 @@ function executarAcaoICP(token,acao,args){
     registrarAmostraICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarAmostraICP(a[0])},
     salvarItemEstoqueICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>salvarItemEstoqueICP(a[0])},
     registrarMovimentacaoEstoqueICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarMovimentacaoEstoqueICP(a[0])},
-    salvarPedidoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>salvarPedidoICP(a[0])}
+    salvarPedidoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>salvarPedidoICP(a[0])},
+    getOperacaoBootstrap:{perfis:ICP_AUTH.perfis,fn:()=>getOperacaoBootstrap_()},
+    atualizarFilaPreparoICP:{perfis:ICP_AUTH.perfis,fn:a=>atualizarFilaPreparoICP_(a[0])},
+    salvarAtividadeICP:{perfis:ICP_AUTH.perfis,fn:a=>salvarAtividadeICP_(a[0])},
+    registrarCurvaICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarCurvaICP_(a[0])},
+    registrarCQICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarCQICP_(a[0])},
+    salvarSequenciaICP:{perfis:ICP_AUTH.perfis,fn:a=>salvarSequenciaICP_(a[0])},
+    registrarEquipamentoICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarEquipamentoICP_(a[0])},
+    registrarErroICP:{perfis:['ADMINISTRADOR','GESTOR'],fn:a=>registrarErroICP_(a[0])}
   };
   const item=mapa[String(acao||'')]; if(!item)throw new Error('Ação não permitida.');
   exigirPerfilICP_(token,item.perfis); return item.fn(Array.isArray(args)?args:[]);
