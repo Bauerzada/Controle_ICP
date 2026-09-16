@@ -23,8 +23,8 @@ function getBootstrapICP_() {
   const ops=getOperacaoBootstrap_(); return {version:ICP_VERSION,metodos:ICP_CONFIG.metodos.slice(),categorias:ICP_CONFIG.categorias.slice(),estoque:estoque,resumo:buildResumoEstoque_(estoque),operacaoResumo:ops.resumo,abaLiberacaoAtual:nomeAbaMes_(new Date())};
 }
 function instalarControleICP() {
-  const ss=getOrCreateEstoqueBanco_();
-  return {ok:true,mensagem:'Banco de estoque preparado.',spreadsheetId:ss.getId(),url:ss.getUrl()};
+  const ss=getOrCreateEstoqueBanco_(); const ops=getOpsDb_(); ensureOpsTabs_(ops);
+  return {ok:true,mensagem:'Bancos de estoque e operação preparados.',estoqueId:ss.getId(),estoqueUrl:ss.getUrl(),operacaoId:ops.getId(),operacaoUrl:ops.getUrl()};
 }
 function numeroNaoNegativo_(value,label) {
   const n=Number(String(value==null?'':value).replace(',','.'));
