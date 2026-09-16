@@ -1,4 +1,4 @@
-const ICP_VERSION = '0.5.0-SELECTION-BUTTONS';
+const ICP_VERSION = '1.0.0-MODULAR-SUITE';
 
 const ICP_CONFIG = Object.freeze({
   pastaProjetoId: '11PzRQcARs-Dz9qpGNWuDB3cF_wsbrB3v',
@@ -20,7 +20,7 @@ function doGet() {
 function getBootstrapICP() { throw new Error('Acesso direto bloqueado. Use uma sessão autenticada.'); }
 function getBootstrapICP_() {
   const estoque = getEstoqueICP_();
-  return {version:ICP_VERSION,metodos:ICP_CONFIG.metodos.slice(),categorias:ICP_CONFIG.categorias.slice(),estoque:estoque,resumo:buildResumoEstoque_(estoque),abaLiberacaoAtual:nomeAbaMes_(new Date())};
+  const ops=getOperacaoBootstrap_(); return {version:ICP_VERSION,metodos:ICP_CONFIG.metodos.slice(),categorias:ICP_CONFIG.categorias.slice(),estoque:estoque,resumo:buildResumoEstoque_(estoque),operacaoResumo:ops.resumo,abaLiberacaoAtual:nomeAbaMes_(new Date())};
 }
 function instalarControleICP() {
   const ss=getOrCreateEstoqueBanco_();
