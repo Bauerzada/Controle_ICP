@@ -56,8 +56,27 @@ function salvarUsuarioICP(token,payload){
   else{if(senha.length<6)throw new Error('A senha deve ter pelo menos 6 caracteres.');reg={id:Utilities.getUuid(),nome,usuario,perfil,ativo:payload.ativo!==false,salt:Utilities.getUuid(),criadoEm:new Date().toISOString()};reg.senhaHash=hashSenhaICP_(senha,reg.salt);usuarios.push(reg);}
   salvarUsuariosICP_(usuarios); return usuarioPublicoICP_(reg);
 }
+function alterarMinhaSenhaICP(token,payload){
+  payload=payload||{};
+  const atual=String(payload.senhaAtual||''), nova=String(payload.novaSenha||''), confirmacao=String(payload.confirmacao||'');
+  const sessao=exigirSessaoICP_(token);
+  if(hashSenhaICP_(atual,sessao.salt)!==sessao.senhaHash) throw new Error('Senha atual incorreta.');
+  if(nova.length<6) throw new Error('A nova senha deve ter pelo menos 6 caracteres.');
+  if(nova!==confirmacao) throw new Error('A confirmação da nova senha não confere.');
+  if(nova===atual) throw new Error('A nova senha deve ser diferente da senha atual.');
+  const usuarios=authUsuarios_(), reg=usuarios.find(u=>u.id===sessao.id);
+  if(!reg) throw new Error('Usuário não localizado.');
+  reg.salt=Utilities.getUuid(); reg.senhaHash=hashSenhaICP_(nova,reg.salt);
+  salvarUsuariosICP_(usuarios);
+  const sessoes=authSessoes_(); Object.keys(sessoes).forEach(k=>{if(sessoes[k]&&sessoes[k].usuarioId===reg.id&&k!==String(token))delete sessoes[k];}); salvarSessoesICP_(sessoes);
+  return {ok:true,mensagem:'Senha alterada com sucesso.'};
+}
+
 function executarAcaoICP(token,acao,args){
   const mapa={
+    listarUsuariosICP:{perfis:['ADMINISTRADOR'],fn:()=>authUsuarios_().map(usuarioPublicoICP_)},
+    salvarUsuarioICP:{perfis:['ADMINISTRADOR'],fn:a=>salvarUsuarioAutenticadoICP_(a[0])},
+    alterarMinhaSenhaICP:{perfis:ICP_AUTH.perfis,fn:a=>alterarMinhaSenhaAutenticadoICP_(token,a[0])},
     getBootstrapICP:{perfis:ICP_AUTH.perfis,fn:()=>getBootstrapICP_()},
     interpretarCodigoICP:{perfis:ICP_AUTH.perfis,fn:a=>interpretarCodigoICP(a[0])},
     registrarAmostraICP:{perfis:ICP_AUTH.perfis,fn:a=>registrarAmostraICP(a[0])},
@@ -79,3 +98,19 @@ function normalizarUsuarioICP_(v){return String(v||'').trim().toLowerCase();}
 function validarCredenciaisNovasICP_(nome,usuario,senha){if(!nome||!usuario)throw new Error('Informe nome e usuário.');if(senha.length<6)throw new Error('A senha deve ter pelo menos 6 caracteres.');}
 function hashSenhaICP_(senha,salt){const bytes=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,String(salt)+'|'+String(senha),Utilities.Charset.UTF_8);return bytes.map(b=>('0'+((b+256)%256).toString(16)).slice(-2)).join('');}
 function usuarioPublicoICP_(u){return {id:u.id,nome:u.nome,usuario:u.usuario,perfil:u.perfil,ativo:u.ativo!==false};}
+
+function salvarUsuarioAutenticadoICP_(payload){
+  payload=payload||{}; const usuarios=authUsuarios_(),id=String(payload.id||''),nome=String(payload.nome||'').trim(),usuario=normalizarUsuarioICP_(payload.usuario),perfil=String(payload.perfil||'OPERADOR').toUpperCase(),senha=String(payload.senha||'');
+  if(!nome||!usuario)throw new Error('Informe nome e usuário.'); if(ICP_AUTH.perfis.indexOf(perfil)<0)throw new Error('Perfil inválido.');
+  if(usuarios.some(u=>u.usuario===usuario&&u.id!==id))throw new Error('Este usuário já está cadastrado.');
+  let reg=usuarios.find(u=>u.id===id);
+  if(reg){reg.nome=nome;reg.usuario=usuario;reg.perfil=perfil;reg.ativo=payload.ativo!==false;if(senha){if(senha.length<6)throw new Error('A senha deve ter pelo menos 6 caracteres.');reg.salt=Utilities.getUuid();reg.senhaHash=hashSenhaICP_(senha,reg.salt);}}
+  else{if(senha.length<6)throw new Error('A senha deve ter pelo menos 6 caracteres.');reg={id:Utilities.getUuid(),nome,usuario,perfil,ativo:payload.ativo!==false,salt:Utilities.getUuid(),criadoEm:new Date().toISOString()};reg.senhaHash=hashSenhaICP_(senha,reg.salt);usuarios.push(reg);}
+  salvarUsuariosICP_(usuarios); return usuarioPublicoICP_(reg);
+}
+function alterarMinhaSenhaAutenticadoICP_(token,payload){
+  payload=payload||{}; const atual=String(payload.senhaAtual||''),nova=String(payload.novaSenha||''),confirmacao=String(payload.confirmacao||''),sessao=exigirSessaoICP_(token);
+  if(hashSenhaICP_(atual,sessao.salt)!==sessao.senhaHash)throw new Error('Senha atual incorreta.'); if(nova.length<6)throw new Error('A nova senha deve ter pelo menos 6 caracteres.'); if(nova!==confirmacao)throw new Error('A confirmação da nova senha não confere.'); if(nova===atual)throw new Error('A nova senha deve ser diferente da senha atual.');
+  const usuarios=authUsuarios_(),reg=usuarios.find(u=>u.id===sessao.id); reg.salt=Utilities.getUuid();reg.senhaHash=hashSenhaICP_(nova,reg.salt);salvarUsuariosICP_(usuarios);
+  const sessoes=authSessoes_();Object.keys(sessoes).forEach(k=>{if(sessoes[k]&&sessoes[k].usuarioId===reg.id&&k!==String(token))delete sessoes[k];});salvarSessoesICP_(sessoes);return {ok:true};
+}
